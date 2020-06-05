@@ -63,7 +63,15 @@ app.post("/upload", async function (req, res) {
   })
 
   var clasificacion = {}
+  var maxAnual = {}
   lluvias.forEach((element) => {
+    if (!maxAnual[element.inicio.agno]) {
+      maxAnual[element.inicio.agno] = element
+    } else {
+      if (maxAnual[element.inicio.agno].pp < element.pp) {
+        maxAnual[element.inicio.agno] = element
+      }
+    }
     if (!clasificacion[element.duracion.toString()]) {
       clasificacion[element.duracion.toString()] = {
         cantidad: 1,
@@ -73,7 +81,6 @@ app.post("/upload", async function (req, res) {
         clasificacion[element.duracion.toString()].cantidad + 1
     }
   })
-  console.log(clasificacion)
 
   const workbookout = new Excel.Workbook()
   const worksheetAF = workbookout.addWorksheet("AF")
@@ -100,6 +107,24 @@ app.post("/upload", async function (req, res) {
   ]
   lluvias.forEach((storm) => {
     worksheetTormentas.addRow({
+      agno: storm.inicio.agno,
+      mes: storm.inicio.mes,
+      dia: storm.inicio.dia,
+      pp: storm.pp,
+      duration: storm.duracion,
+    })
+  })
+  const worksheetMaxAnual = workbookout.addWorksheet("Maxima tormenta anual")
+
+  worksheetMaxAnual.columns = [
+    { header: "Año", key: "agno", width: 20 },
+    { header: "Mes", key: "mes", width: 20 },
+    { header: "Dia", key: "dia", width: 20 },
+    { header: "PP (mm)", key: "pp", width: 20 },
+    { header: "Duracion", key: "duration", width: 20 },
+  ]
+  maxAnual.forEach((storm) => {
+    worksheetMaxAnual.addRow({
       agno: storm.inicio.agno,
       mes: storm.inicio.mes,
       dia: storm.inicio.dia,
