@@ -123,7 +123,8 @@ app.post("/upload", async function (req, res) {
     { header: "PP (mm)", key: "pp", width: 20 },
     { header: "Duracion", key: "duration", width: 20 },
   ]
-  maxAnual.forEach((storm) => {
+  Object.keys(maxAnual).forEach((year) => {
+    var storm = maxAnual[year]
     worksheetMaxAnual.addRow({
       agno: storm.inicio.agno,
       mes: storm.inicio.mes,
