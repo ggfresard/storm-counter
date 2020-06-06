@@ -264,7 +264,7 @@ app.post("/upload", async function (req, res) {
     var storms = tormentas1[year]
     var max = storms[0]
     for (var i = 1; i < storms.length; i++) {
-      if (max.valor < storms[i]) {
+      if (max.valor < storms[i].valor) {
         max = storms[i]
       }
     }
@@ -289,7 +289,7 @@ app.post("/upload", async function (req, res) {
     var storms = tormentas2[year]
     var max = storms[0]
     for (var i = 1; i < storms.length; i++) {
-      if (max.valor < storms[i]) {
+      if (max.valor < storms[i].valor) {
         max = storms[i]
       }
     }
@@ -313,7 +313,7 @@ app.post("/upload", async function (req, res) {
     var storms = tormentas3[year]
     var max = storms[0]
     for (var i = 1; i < storms.length; i++) {
-      if (max.valor < storms[i]) {
+      if (max.valor < storms[i].valor) {
         max = strotms[i]
       }
     }
@@ -337,7 +337,7 @@ app.post("/upload", async function (req, res) {
     var storms = tormentas4[year]
     var max = storms[0]
     for (var i = 1; i < storms.length; i++) {
-      if (max.valor < storms[i]) {
+      if (max.valor < storms[i].valor) {
         max = strotms[i]
       }
     }
