@@ -33,8 +33,100 @@ app.post("/upload", async function (req, res) {
       valor: worsheet.getCell("D" + i.toString()).value,
     })
   }
+  var añoInicio = data[0].agno
+  var añoFinal = data[data.length - 1].agno
 
   var lluvias = []
+  var tormentas2 = {}
+  var tormentas3 = {}
+  var tormentas4 = {}
+
+  for (let año = añoInicio; año < añoFinal + 1; año++) {
+    var dias = data.filter((dia) => dia.agno == año)
+    for (let i = 0; i < dias.length - 1; i++) {
+      var valor = 0
+      for (let j = 0; j < 2; j++) {
+        valor += dias[i + j].valor
+      }
+      if (valor > 0) {
+        if (!tormentas2[año.toString()]) {
+          tormentas2[año.toString()] = [
+            {
+              inicio: {
+                agno: dias[i].agno,
+                mes: dias[i].mes,
+                dia: dias[i].dia,
+              },
+              valor: valor,
+            },
+          ]
+        } else {
+          tormentas2[año.toString()].push({
+            inicio: { agno: dias[i].agno, mes: dias[i].mes, dia: dias[i].dia },
+            valor: valor,
+          })
+        }
+      }
+      if (i < dias.length - 2) {
+        valor = 0
+        for (let j = 0; j < 3; j++) {
+          valor += dias[i + j].valor
+        }
+        if (valor > 0) {
+          if (!tormentas3[año.toString()]) {
+            tormentas3[año.toString()] = [
+              {
+                inicio: {
+                  agno: dias[i].agno,
+                  mes: dias[i].mes,
+                  dia: dias[i].dia,
+                },
+                valor: valor,
+              },
+            ]
+          } else {
+            tormentas3[año.toString()].push({
+              inicio: {
+                agno: dias[i].agno,
+                mes: dias[i].mes,
+                dia: dias[i].dia,
+              },
+              valor: valor,
+            })
+          }
+        }
+      }
+      if (i < dias.length - 3) {
+        valor = 0
+        for (let j = 0; j < 4; j++) {
+          valor += dias[i + j].valor
+        }
+        if (valor > 0) {
+          if (!tormentas4[año.toString()]) {
+            tormentas4[año.toString()] = [
+              {
+                inicio: {
+                  agno: dias[i].agno,
+                  mes: dias[i].mes,
+                  dia: dias[i].dia,
+                },
+                valor: valor,
+              },
+            ]
+          } else {
+            tormentas4[año.toString()].push({
+              inicio: {
+                agno: dias[i].agno,
+                mes: dias[i].mes,
+                dia: dias[i].dia,
+              },
+              valor: valor,
+            })
+          }
+        }
+      }
+    }
+  }
 
   var lluvia = {}
   var contador = 0
@@ -131,6 +223,79 @@ app.post("/upload", async function (req, res) {
       dia: storm.inicio.dia,
       pp: storm.pp,
       duration: storm.duracion,
+    })
+  })
+
+  const worksheetTormentas2 = workbookout.addWorksheet("Tormentas 2 dias")
+
+  worksheetTormentas2.columns = [
+    { header: "Año", key: "agno", width: 20 },
+    { header: "Mes", key: "mes", width: 20 },
+    { header: "Dia", key: "dia", width: 20 },
+    { header: "PP (mm)", key: "pp", width: 20 },
+  ]
+  Object.keys(tormentas2).forEach((year) => {
+    var storms = tormentas2[year]
+    var max = storms[0]
+    for (var i = 1; i < storms.length; i++) {
+      if (max.valor < storms[i]) {
+        max = strotms[i]
+      }
+    }
+
+    worksheetTormentas2.addRow({
+      agno: max.inicio.agno,
+      mes: max.inicio.mes,
+      dia: max.inicio.dia,
+      pp: max.valor,
+    })
+  })
+  const worksheetTormentas3 = workbookout.addWorksheet("Tormentas 3 dias")
+
+  worksheetTormentas3.columns = [
+    { header: "Año", key: "agno", width: 20 },
+    { header: "Mes", key: "mes", width: 20 },
+    { header: "Dia", key: "dia", width: 20 },
+    { header: "PP (mm)", key: "pp", width: 20 },
+  ]
+  Object.keys(tormentas3).forEach((year) => {
+    var storms = tormentas3[year]
+    var max = storms[0]
+    for (var i = 1; i < storms.length; i++) {
+      if (max.valor < storms[i]) {
+        max = strotms[i]
+      }
+    }
+
+    worksheetTormentas3.addRow({
+      agno: max.inicio.agno,
+      mes: max.inicio.mes,
+      dia: max.inicio.dia,
+      pp: max.valor,
+    })
+  })
+  const worksheetTormentas4 = workbookout.addWorksheet("Tormentas 4 dias")
+
+  worksheetTormentas4.columns = [
+    { header: "Año", key: "agno", width: 20 },
+    { header: "Mes", key: "mes", width: 20 },
+    { header: "Dia", key: "dia", width: 20 },
+    { header: "PP (mm)", key: "pp", width: 20 },
+  ]
+  Object.keys(tormentas4).forEach((year) => {
+    var storms = tormentas4[year]
+    var max = storms[0]
+    for (var i = 1; i < storms.length; i++) {
+      if (max.valor < storms[i]) {
+        max = strotms[i]
+      }
+    }
+
+    worksheetTormentas4.addRow({
+      agno: max.inicio.agno,
+      mes: max.inicio.mes,
+      dia: max.inicio.dia,
+      pp: max.valor,
     })
   })
 
