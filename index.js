@@ -314,7 +314,7 @@ app.post("/upload", async function (req, res) {
     var max = storms[0]
     for (var i = 1; i < storms.length; i++) {
       if (max.valor < storms[i].valor) {
-        max = strotms[i]
+        max = storms[i]
       }
     }
 
@@ -338,7 +338,7 @@ app.post("/upload", async function (req, res) {
     var max = storms[0]
     for (var i = 1; i < storms.length; i++) {
       if (max.valor < storms[i].valor) {
-        max = strotms[i]
+        max = storms[i]
       }
     }
 
