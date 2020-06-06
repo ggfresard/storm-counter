@@ -40,9 +40,35 @@ app.post("/upload", async function (req, res) {
   var tormentas2 = {}
   var tormentas3 = {}
   var tormentas4 = {}
+  var tormentas1 = {}
 
   for (let año = añoInicio; año < añoFinal + 1; año++) {
     var dias = data.filter((dia) => dia.agno == año)
+    for (let i = 0; i < dias.length; i++) {
+      if (dias[i].valor > 0) {
+        if (!tormentas1[año.toString()]) {
+          tormentas1[año.toString()] = [
+            {
+              inicio: {
+                agno: dias[i].agno,
+                mes: dias[i].mes,
+                dia: dias[i].dia,
+              },
+              valor: dias[i].valor,
+            },
+          ]
+        } else {
+          tormentas1[año.toString()].push({
+            inicio: {
+              agno: dias[i].agno,
+              mes: dias[i].mes,
+              dia: dias[i].dia,
+            },
+            valor: dias[i].valor,
+          })
+        }
+      }
+    }
     for (let i = 0; i < dias.length - 1; i++) {
       var valor = 0
       for (let j = 0; j < 2; j++) {
@@ -226,6 +252,31 @@ app.post("/upload", async function (req, res) {
     })
   })
 
+  const worksheetTormentas1 = workbookout.addWorksheet("Tormentas 1 dia")
+
+  worksheetTormentas1.columns = [
+    { header: "Año", key: "agno", width: 20 },
+    { header: "Mes", key: "mes", width: 20 },
+    { header: "Dia", key: "dia", width: 20 },
+    { header: "PP (mm)", key: "pp", width: 20 },
+  ]
+  Object.keys(tormentas1).forEach((year) => {
+    var storms = tormentas1[year]
+    var max = storms[0]
+    for (var i = 1; i < storms.length; i++) {
+      if (max.valor < storms[i]) {
+        max = storms[i]
+      }
+    }
+
+    worksheetTormentas1.addRow({
+      agno: max.inicio.agno,
+      mes: max.inicio.mes,
+      dia: max.inicio.dia,
+      pp: max.valor,
+    })
+  })
+
   const worksheetTormentas2 = workbookout.addWorksheet("Tormentas 2 dias")
 
   worksheetTormentas2.columns = [
@@ -239,7 +290,7 @@ app.post("/upload", async function (req, res) {
     var max = storms[0]
     for (var i = 1; i < storms.length; i++) {
       if (max.valor < storms[i]) {
-        max = strotms[i]
+        max = storms[i]
       }
     }
 
