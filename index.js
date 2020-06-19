@@ -349,6 +349,113 @@ app.post("/upload", async function (req, res) {
       pp: max.valor,
     })
   })
+  const worksheetOrdenadas = workbookout.addWorksheet("Ordenadas para informe")
+
+  worksheetOrdenadas.columns = [
+    { header: "Año", key: "agno", width: 20 },
+    { header: "Mes", key: "mes", width: 20 },
+    { header: "Dia", key: "dia", width: 20 },
+    { header: "PP (mm)", key: "pp", width: 20 },
+    { header: "Año", key: "agno1", width: 20 },
+    { header: "Mes", key: "mes1", width: 20 },
+    { header: "Dia", key: "dia1", width: 20 },
+    { header: "PP (mm)", key: "pp1", width: 20 },
+    { header: "Año", key: "agno2", width: 20 },
+    { header: "Mes", key: "mes2", width: 20 },
+    { header: "Dia", key: "dia2", width: 20 },
+    { header: "PP (mm)", key: "pp2", width: 20 },
+  ]
+  var grupos = (data.length - (data.length % 90)) / 90
+  for (let i = 0; i < grupos; i++) {
+    for (let j = 0; j < 30; j++) {
+      worksheetOrdenadas.addRow({
+        agno: data[i * 90 + j].agno,
+        mes: data[i * 90 + j].mes,
+        dia: data[i * 90 + j].dia,
+        pp: data[i * 90 + j].valor,
+        agno1: data[i * 90 + j + 30].agno,
+        mes1: data[i * 90 + j + 30].mes,
+        dia1: data[i * 90 + j + 30].dia,
+        pp1: data[i * 90 + j + 30].valor,
+        agno2: data[i * 90 + j + 60].agno,
+        mes2: data[i * 90 + j + 60].mes,
+        dia2: data[i * 90 + j + 60].dia,
+        pp2: data[i * 90 + j + 60].valor,
+      })
+    }
+    worksheetOrdenadas.addRow({})
+  }
+  console.log("ay")
+  var resto = data.length % 90
+  if (resto > 60) {
+    var dif = resto - 60
+    let contador = 0
+    for (let j = 0; j < 30; j++) {
+      if (contador < dif) {
+        worksheetOrdenadas.addRow({
+          agno: data[grupos * 90 + j].agno,
+          mes: data[grupos * 90 + j].mes,
+          dia: data[grupos * 90 + j].dia,
+          pp: data[grupos * 90 + j].valor,
+          agno1: data[grupos * 90 + j + 30].agno,
+          mes1: data[grupos * 90 + j + 30].mes,
+          dia1: data[grupos * 90 + j + 30].dia,
+          pp1: data[grupos * 90 + j + 30].valor,
+          agno2: data[grupos * 90 + j + 60].agno,
+          mes2: data[grupos * 90 + j + 60].mes,
+          dia2: data[grupos * 90 + j + 60].dia,
+          pp2: data[grupos * 90 + j + 60].valor,
+        })
+      } else {
+        worksheetOrdenadas.addRow({
+          agno: data[grupos * 90 + j].agno,
+          mes: data[grupos * 90 + j].mes,
+          dia: data[grupos * 90 + j].dia,
+          pp: data[grupos * 90 + j].valor,
+          agno1: data[grupos * 90 + j + 30].agno,
+          mes1: data[grupos * 90 + j + 30].mes,
+          dia1: data[grupos * 90 + j + 30].dia,
+          pp1: data[grupos * 90 + j + 30].valor,
+        })
+      }
+      contador += 1
+    }
+  } else if (resto > 30) {
+    var dif = resto - 30
+    let contador = 0
+    for (let j = 0; j < 30; j++) {
+      if (contador < dif) {
+        worksheetOrdenadas.addRow({
+          agno: data[grupos * 90 + j].agno,
+          mes: data[grupos * 90 + j].mes,
+          dia: data[grupos * 90 + j].dia,
+          pp: data[grupos * 90 + j].valor,
+          agno1: data[grupos * 90 + j + 30].agno,
+          mes1: data[grupos * 90 + j + 30].mes,
+          dia1: data[grupos * 90 + j + 30].dia,
+          pp1: data[grupos * 90 + j + 30].valor,
+        })
+      } else {
+        worksheetOrdenadas.addRow({
+          agno: data[grupos * 90 + j].agno,
+          mes: data[grupos * 90 + j].mes,
+          dia: data[grupos * 90 + j].dia,
+          pp: data[grupos * 90 + j].valor,
+        })
+      }
+      contador += 1
+    }
+  } else if (resto > 0) {
+    var dif = resto - 30
+    for (let j = 0; j < resto; j++) {
+      worksheetOrdenadas.addRow({
+        agno: data[grupos * 90 + j].agno,
+        mes: data[grupos * 90 + j].mes,
+        dia: data[grupos * 90 + j].dia,
+        pp: data[grupos * 90 + j].valor,
+      })
+    }
+  }
 
   await workbookout.xlsx.writeFile(path.join(__dirname, "output.xlsx"))
   res.sendFile(path.join(__dirname, "output.xlsx"), () => {
