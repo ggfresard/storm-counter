@@ -456,6 +456,85 @@ app.post("/upload", async function (req, res) {
       })
     }
   }
+  const worksheetOrdenadasFecha = workbookout.addWorksheet(
+    "Ordenadas para informe con fecha"
+  )
+
+  worksheetOrdenadasFecha.columns = [
+    { header: "Fecha", key: "fecha", width: 20 },
+    { header: "PP (mm)", key: "pp", width: 20 },
+    { header: "Fecha", key: "fecha1", width: 20 },
+    { header: "PP (mm)", key: "pp1", width: 20 },
+    { header: "Fecha", key: "fecha2", width: 20 },
+    { header: "PP (mm)", key: "pp2", width: 20 },
+    { header: "Fecha", key: "fecha3", width: 20 },
+    { header: "PP (mm)", key: "pp3", width: 20 },
+    { header: "Fecha", key: "fecha4", width: 20 },
+    { header: "PP (mm)", key: "pp4", width: 20 },
+  ]
+  var grupos = (data.length - (data.length % 200)) / 200
+  for (let i = 0; i < grupos; i++) {
+    for (let j = 0; j < 40; j++) {
+      worksheetOrdenadasFecha.addRow({
+        fecha: `${data[i * 200 + j].dia}-${data[i * 200 + j].mes}-${
+          data[i * 200 + j].agno
+        }`,
+        pp: data[i * 200 + j].valor,
+        fecha1: `${data[i * 200 + j + 40].dia}-${data[i * 200 + j + 40].mes}-${
+          data[i * 200 + j + 40].agno
+        }`,
+        pp1: data[i * 200 + j + 40].valor,
+        fecha2: `${data[i * 200 + j + 80].dia}-${data[i * 200 + j + 80].mes}-${
+          data[i * 200 + j + 80].agno
+        }`,
+        pp2: data[i * 200 + j + 80].valor,
+        fecha3: `${data[i * 200 + j + 120].dia}-${
+          data[i * 200 + j + 120].mes
+        }-${data[i * 200 + j + 120].agno}`,
+        pp3: data[i * 200 + j + 120].valor,
+        fecha4: `${data[i * 200 + j + 160].dia}-${
+          data[i * 200 + j + 160].mes
+        }-${data[i * 200 + j + 160].agno}`,
+        pp4: data[i * 200 + j + 160].valor,
+      })
+    }
+  }
+  console.log("ay")
+  var resto = data.length % 200
+  for (let i = 0; i < 40; i++) {
+    let row = {}
+    if (grupos * 200 + i < data.length) {
+      row.fecha = `${data[grupos * 200 + i].dia}-${
+        data[grupos * 200 + i].mes
+      }-${data[grupos * 200 + i].agno}`
+      row.pp = data[grupos * 200 + i].valor
+    }
+    if (grupos * 200 + i + 40 < data.length) {
+      row.fecha1 = `${data[grupos * 200 + i + 40].dia}-${
+        data[grupos * 200 + i + 40].mes
+      }-${data[grupos * 200 + i + 40].agno}`
+      row.pp1 = data[grupos * 200 + i + 40].valor
+    }
+    if (grupos * 200 + i + 80 < data.length) {
+      row.fecha2 = `${data[grupos * 200 + i + 80].dia}-${
+        data[grupos * 200 + i + 80].mes
+      }-${data[grupos * 200 + i + 80].agno}`
+      row.pp2 = data[grupos * 200 + i + 80].valor
+    }
+    if (grupos * 200 + i + 120 < data.length) {
+      row.fecha3 = `${data[grupos * 200 + i + 120].dia}-${
+        data[grupos * 200 + i + 120].mes
+      }-${data[grupos * 200 + i + 120].agno}`
+      row.pp3 = data[grupos * 200 + 120].valor
+    }
+    if (grupos * 200 + i + 160 < data.length) {
+      row.fecha4 = `${data[grupos * 200 + i + 160].dia}-${
+        data[grupos * 200 + i + 160].mes
+      }-${data[grupos * 200 + i + 160].agno}`
+      row.pp4 = data[grupos * 200 + i + 160].valor
+    }
+    worksheetOrdenadasFecha.addRow(row)
+  }
 
   await workbookout.xlsx.writeFile(path.join(__dirname, "output.xlsx"))
   res.sendFile(path.join(__dirname, "output.xlsx"), () => {
